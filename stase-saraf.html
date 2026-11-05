@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stase Saraf: Keterampilan Klinis</title>
+<style>
+:root{
+  --bg:#f7f6f2; --surface:#ffffff; --text:#1d2330; --muted:#5b6475; --line:#e1ded6;
+  --accent:#1f5f8b; --accent-soft:#e3eef6; --accent-text:#ffffff;
+  --warn:#8a4300; --warn-soft:#fdf0e1; --danger:#8a1c2e; --danger-soft:#fbe6ea;
+  --c1-bg:#dbeafe; --c1-fg:#1e3a8a;
+  --c2-bg:#dcf2e3; --c2-fg:#14532d;
+  --c3-bg:#ece3f8; --c3-fg:#4c1d95;
+  --c4-bg:#fdebc8; --c4-fg:#7a3e00;
+  --c5-bg:#fbdfe3; --c5-fg:#881337;
+  --radius:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14171c; --surface:#1c2027; --text:#e8eaee; --muted:#a1a9b6; --line:#2e343e;
+    --accent:#7bb6e0; --accent-soft:#1f3342; --accent-text:#0e1a24;
+    --warn:#f2b672; --warn-soft:#3a2a14; --danger:#f4a3b0; --danger-soft:#44202a;
+    --c1-bg:#1e3a5f; --c1-fg:#cfe3ff;
+    --c2-bg:#1b4130; --c2-fg:#c9efd6;
+    --c3-bg:#3a2a5c; --c3-fg:#e3d6fb;
+    --c4-bg:#4a3510; --c4-fg:#fde3b0;
+    --c5-bg:#4f1d2a; --c5-fg:#fbd0d8;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14171c; --surface:#1c2027; --text:#e8eaee; --muted:#a1a9b6; --line:#2e343e;
+  --accent:#7bb6e0; --accent-soft:#1f3342; --accent-text:#0e1a24;
+  --warn:#f2b672; --warn-soft:#3a2a14; --danger:#f4a3b0; --danger-soft:#44202a;
+  --c1-bg:#1e3a5f; --c1-fg:#cfe3ff;
+  --c2-bg:#1b4130; --c2-fg:#c9efd6;
+  --c3-bg:#3a2a5c; --c3-fg:#e3d6fb;
+  --c4-bg:#4a3510; --c4-fg:#fde3b0;
+  --c5-bg:#4f1d2a; --c5-fg:#fbd0d8;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+.wrap{max-width:980px; margin:0 auto; padding:0 16px}
+header.top{padding:28px 0 12px}
+header.top h1{margin:0 0 4px; font-size:1.7rem; line-height:1.25}
+header.top p{margin:0; color:var(--muted)}
+.progress{margin-top:14px; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+.bar{flex:1 1 200px; height:10px; background:var(--line); border-radius:99px; overflow:hidden}
+.bar>i{display:block; height:100%; width:0; background:var(--accent); transition:width .25s}
+.progress small{color:var(--muted)}
+.btn-ghost{
+  background:transparent; color:var(--muted); border:1px solid var(--line);
+  border-radius:8px; padding:4px 10px; font:inherit; font-size:.85rem; cursor:pointer;
+}
+.btn-ghost:hover{color:var(--text); border-color:var(--muted)}
+
+nav.tabs{
+  position:sticky; top:0; z-index:5; background:var(--bg);
+  border-bottom:1px solid var(--line); margin-bottom:20px;
+}
+nav.tabs .wrap{display:flex; gap:4px; overflow-x:auto; padding-top:8px}
+nav.tabs button{
+  flex:0 0 auto; background:none; border:0; border-bottom:3px solid transparent;
+  padding:10px 12px; font:inherit; color:var(--muted); cursor:pointer; white-space:nowrap;
+}
+nav.tabs button[aria-selected="true"]{color:var(--accent); border-bottom-color:var(--accent); font-weight:600}
+nav.tabs button:hover{color:var(--text)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+.panel{display:none; padding-bottom:60px}
+.panel.on{display:block}
+h2{font-size:1.35rem; margin:28px 0 10px}
+h2:first-child{margin-top:0}
+h3{font-size:1.05rem; margin:0 0 6px}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+.card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px; margin-bottom:12px;
+}
+.callout{
+  border-left:4px solid var(--accent); background:var(--accent-soft);
+  padding:12px 14px; border-radius:0 var(--radius) var(--radius) 0; margin:0 0 14px;
+}
+.callout.warn{border-left-color:var(--warn); background:var(--warn-soft)}
+.callout.danger{border-left-color:var(--danger); background:var(--danger-soft)}
+.callout strong:first-child{display:block; margin-bottom:2px}
+
+.chip{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:28px; height:28px; padding:0 8px; border-radius:8px; border:1px solid transparent;
+  font:600 .85rem/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  cursor:pointer; background:var(--line); color:var(--text);
+}
+.chip[data-cat="1"]{background:var(--c1-bg); color:var(--c1-fg)}
+.chip[data-cat="2"]{background:var(--c2-bg); color:var(--c2-fg)}
+.chip[data-cat="3"]{background:var(--c3-bg); color:var(--c3-fg)}
+.chip[data-cat="4"]{background:var(--c4-bg); color:var(--c4-fg)}
+.chip[data-cat="5"]{background:var(--c5-bg); color:var(--c5-fg)}
+.chip.outline{background:transparent; border-color:currentColor}
+.chip.sel{box-shadow:0 0 0 2px var(--text)}
+.chiprow{display:flex; flex-wrap:wrap; gap:6px}
+.chiprow.legend .chip{cursor:default}
+
+.legend-row{display:flex; flex-wrap:wrap; gap:6px 14px; font-size:.88rem; color:var(--muted); margin-bottom:12px}
+.legend-row span{display:inline-flex; align-items:center; gap:6px}
+
+table{width:100%; border-collapse:collapse; font-size:.95rem}
+th,td{text-align:left; padding:8px 10px; border-bottom:1px solid var(--line); vertical-align:top}
+th{font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted)}
+.tablewrap{overflow-x:auto; background:var(--surface); border:1px solid var(--line); border-radius:var(--radius)}
+.lvl{
+  display:inline-block; padding:1px 8px; border-radius:99px; font-size:.8rem;
+  background:var(--accent-soft); color:var(--accent); font-weight:600; white-space:nowrap;
+}
+ol.plain, ul.plain{margin:0; padding-left:22px}
+ol.plain li, ul.plain li{margin-bottom:6px}
+
+/* Blok */
+details.blk{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  margin-bottom:10px; overflow:hidden;
+}
+details.blk>summary{
+  list-style:none; cursor:pointer; padding:12px 14px; display:flex; align-items:center; gap:10px;
+}
+details.blk>summary::-webkit-details-marker{display:none}
+details.blk>summary .nm{flex:1; font-weight:600}
+details.blk>summary .cnt{font-size:.85rem; color:var(--muted); white-space:nowrap}
+details.blk>summary::after{content:"+"; color:var(--muted); font-size:1.2rem; width:16px; text-align:center}
+details.blk[open]>summary::after{content:"\2212"}
+details.blk .body{padding:2px 14px 14px; border-top:1px solid var(--line)}
+.lo{display:flex; gap:10px; align-items:flex-start; padding:8px 0; border-bottom:1px dashed var(--line)}
+.lo:last-child{border-bottom:0}
+.lo input{margin-top:6px; width:18px; height:18px; flex:0 0 auto; accent-color:var(--accent)}
+.lo label{cursor:pointer}
+.lo input:checked + label{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--line)}
+.toolbar{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px}
+.pill{
+  border:1px solid var(--line); background:var(--surface); color:var(--text); border-radius:99px;
+  padding:5px 12px; font:inherit; font-size:.9rem; cursor:pointer;
+}
+.pill[aria-pressed="true"]{background:var(--accent); color:var(--accent-text); border-color:var(--accent)}
+
+/* Peta keputusan */
+.search{
+  width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:10px;
+  background:var(--surface); color:var(--text); font:inherit; margin-bottom:10px;
+}
+.flabel{font-size:.82rem; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin:12px 0 6px}
+.gtitle{margin:22px 0 8px; font-size:1.1rem}
+.dis h3{display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap}
+ol.steps{list-style:none; padding:0; margin:8px 0; counter-reset:s}
+ol.steps li{display:flex; gap:10px; align-items:flex-start; padding:5px 0; counter-increment:s}
+ol.steps li::before{
+  content:counter(s); flex:0 0 22px; height:22px; border-radius:99px; background:var(--line);
+  color:var(--muted); font-size:.78rem; display:flex; align-items:center; justify-content:center; margin-top:3px;
+}
+ol.steps .t b{font-weight:600}
+ol.steps .t small{display:block; color:var(--muted); font-size:.88rem; line-height:1.35}
+.extra{display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin:6px 0}
+.extra .lbl{font-size:.85rem; color:var(--muted); margin-right:4px}
+.key{font-size:.93rem; background:var(--accent-soft); border-radius:8px; padding:8px 10px; margin-top:8px}
+.empty{padding:24px; text-align:center; color:var(--muted)}
+
+.flow{
+  font:.88rem/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:14px; overflow-x:auto; white-space:pre; margin:0 0 14px;
+}
+
+/* Flashcard jebakan */
+.flash{
+  width:100%; text-align:left; font:inherit; color:inherit; cursor:pointer;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+  padding:14px; margin-bottom:10px;
+}
+.flash .sit{font-weight:600; margin-bottom:6px}
+.flash .bad{color:var(--danger); font-size:.95rem}
+.flash .good{display:none; margin-top:8px; padding:8px 10px; border-radius:8px; background:var(--accent-soft); font-size:.95rem}
+.flash .hint{font-size:.82rem; color:var(--muted); margin-top:8px}
+.flash.open .good{display:block}
+.flash.open .hint{display:none}
+
+/* Latihan */
+.q h3{margin-bottom:8px}
+.q button.reveal{
+  background:var(--accent); color:var(--accent-text); border:0; border-radius:8px;
+  padding:8px 14px; font:inherit; cursor:pointer; margin-top:6px;
+}
+.q .ans{display:none; margin-top:12px}
+.q.open .ans{display:block}
+.q.open button.reveal{display:none}
+
+footer{padding:24px 0 40px; color:var(--muted); font-size:.88rem}
+
+@media (max-width:560px){
+  header.top h1{font-size:1.4rem}
+  .flow{font-size:.78rem}
+}
+@media print{
+  nav.tabs, .progress, .toolbar, .search, .btn-ghost{display:none !important}
+  .panel{display:block !important; padding-bottom:10px}
+  details.blk .body{display:block}
+  .flash .good{display:block !important}
+  .q .ans{display:block !important}
+  .q button.reveal{display:none !important}
+  body{background:#fff; color:#000}
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <h1>Stase Saraf: Keterampilan Klinis</h1>
+    <p>Learning objective per blok keterampilan dan peta keputusan dari kecurigaan penyakit ke blok yang dipraktikkan.</p>
+    <div class="progress">
+      <div class="bar" role="progressbar" aria-label="Progres learning objective" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><i id="barfill"></i></div>
+      <small id="progtxt">0 dari 0 LO dikuasai</small>
+      <button class="btn-ghost" id="reset" type="button">Reset centang</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Bagian materi">
+  <div class="wrap" role="tablist" id="tabs">
+    <button role="tab" aria-selected="true" data-tab="mulai">Mulai</button>
+    <button role="tab" aria-selected="false" data-tab="blok">Blok A–R</button>
+    <button role="tab" aria-selected="false" data-tab="peta">Peta keputusan</button>
+    <button role="tab" aria-selected="false" data-tab="jebakan">Jebakan</button>
+    <button role="tab" aria-selected="false" data-tab="nilai">Penilaian</button>
+    <button role="tab" aria-selected="false" data-tab="latihan">Latihan</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<!-- ============ MULAI ============ -->
+<section class="panel on" id="p-mulai">
+  <div class="callout warn">
+    <strong>Catatan penggunaan</strong>
+    Level target dan jumlah minimal kasus adalah usulan. Cocokkan dengan buku panduan dan logbook stase di kampus Anda sebelum dipakai sebagai patokan. Dosis obat mengikuti pedoman PERDOSSI dan buku acuan stase.
+  </div>
+
+  <h2>Skala level keterampilan SKDI</h2>
+  <div class="tablewrap">
+    <table>
+      <tr><td><span class="lvl">Level 1</span></td><td>Mengetahui</td></tr>
+      <tr><td><span class="lvl">Level 2</span></td><td>Pernah melihat</td></tr>
+      <tr><td><span class="lvl">Level 3</span></td><td>Pernah melakukan di bawah supervisi</td></tr>
+      <tr><td><span class="lvl">Level 4</span></td><td>Mampu melakukan mandiri</td></tr>
+    </table>
+  </div>
+
+  <h2>Tujuan umum stase</h2>
+  <p class="muted">Setelah stase selesai, mahasiswa mampu:</p>
+  <div class="card">
+    <ol class="plain">
+      <li>Melakukan anamnesis dan pemeriksaan neurologis lengkap pada pasien nyata secara sistematis dalam waktu kurang lebih 20 menit.</li>
+      <li>Menentukan diagnosis topis (letak lesi) dan diagnosis etiologis dari temuan klinis.</li>
+      <li>Mengenali dan menstabilkan kegawatan neurologis di IGD sebelum merujuk.</li>
+      <li>Memilih dan menginterpretasi pemeriksaan penunjang dasar.</li>
+      <li>Berkomunikasi dan bersikap profesional pada pasien dengan defisit neurologis dan keluarganya.</li>
+    </ol>
+  </div>
+
+  <h2>Peta 18 blok keterampilan</h2>
+  <p class="muted">Ketuk sebuah blok untuk membuka learning objective-nya.</p>
+  <div class="legend-row" id="legend"></div>
+  <div class="tablewrap">
+    <table id="maptable">
+      <thead><tr><th>Blok</th><th>Keterampilan</th><th>Target</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <h2>Penalaran klinis</h2>
+  <div class="card">
+    <p>Mahasiswa mampu menentukan level lesi dari temuan, lalu menyusun diagnosis banding dengan alur:</p>
+    <p><strong>temuan → topis → etiologi</strong></p>
+    <h3>Level lesi (dari atas ke bawah)</h3>
+    <p>kortikal, subkortikal, batang otak, serebelum, medula spinalis, radiks, saraf perifer, neuromuscular junction, otot.</p>
+    <h3>Kategori etiologi</h3>
+    <p>vaskular, infeksi, tumor, trauma, degeneratif, autoimun, metabolik, epilepsi.</p>
+    <p class="muted" style="margin:0">Mahasiswa juga mampu menjelaskan alasan memilih atau menunda penunjang pada kasus tertentu.</p>
+  </div>
+
+  <h2>Urutan kerja ringkas untuk satu kasus</h2>
+  <div class="card">
+    <ol class="plain">
+      <li><span class="chiprow" style="display:inline-flex;gap:4px"><button class="chip" data-cat="1" data-go="B">B</button><button class="chip" data-cat="4" data-go="P">P</button><button class="chip" data-cat="5" data-go="Q">Q</button></span> dulu bila ada tanda gawat. Selebihnya mulai dari <button class="chip" data-cat="1" data-go="A">A</button>.</li>
+      <li>A menghasilkan kecurigaan awal dan menentukan blok mana yang dipercepat.</li>
+      <li>B sampai I memberi data untuk diagnosis topis.</li>
+      <li>M memberi angka keparahan dan dasar keputusan terapi.</li>
+      <li>N dan O dipilih dari kecurigaan, bukan dari kebiasaan.</li>
+      <li>Q dan R menutup kasus: tatalaksana, rujukan, edukasi.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ BLOK ============ -->
+<section class="panel" id="p-blok">
+  <h2>Learning objective per blok</h2>
+  <p class="muted">Centang LO yang sudah Anda kuasai. Progres tersimpan di browser ini.</p>
+  <div class="toolbar">
+    <button class="pill" id="expand" type="button">Buka semua</button>
+    <button class="pill" id="collapse" type="button">Tutup semua</button>
+  </div>
+  <div id="blocks"></div>
+</section>
+
+<!-- ============ PETA ============ -->
+<section class="panel" id="p-peta">
+  <h2>Peta keputusan</h2>
+
+  <div class="callout danger">
+    <strong>Langkah 0: ada tanda gawat?</strong>
+    Kesadaran turun, napas ireguler, kejang berlangsung, pupil anisokor, atau TD sangat tinggi. Bila ya, kerjakan B + P + Q dulu (jalan napas, glukosa, posisi). Anamnesis menyusul.
+  </div>
+
+  <h3>Langkah 1: dari keluhan utama ke kecurigaan</h3>
+  <pre class="flow" aria-label="Diagram alur dari keluhan utama ke kecurigaan penyakit">Pasien datang
+  │
+  ├─ Tanda gawat? ya → B + P + Q dulu, anamnesis menyusul
+  │
+  ├─ Penurunan kesadaran ......... stroke, SAH, meningitis/ensefalitis, TIK naik,
+  │                                 cedera kepala, ensefalopati metabolik, status epileptikus
+  ├─ Kelemahan/mencong mendadak .. stroke iskemik/hemoragik, TIA, Bell's palsy
+  ├─ Kejang ...................... epilepsi, kejang simptomatik, status epileptikus
+  ├─ Nyeri kepala ................ migrain, tension, cluster, SAH, meningitis, tumor/TIK naik
+  ├─ Pusing berputar ............. BPPV, neuritis vestibularis, vertigo sentral
+  ├─ Kelemahan tungkai bertahap .. GBS, mielopati, HNP, neuropati, miastenia
+  ├─ Nyeri punggung + kesemutan .. HNP/radikulopati, kompresi medula spinalis
+  ├─ Demam + kaku kuduk .......... meningitis, ensefalitis
+  └─ Gangguan memori/gerak lambat  demensia, Parkinson, delirium</pre>
+
+  <div class="callout">
+    <strong>Blok inti</strong>
+    Hampir semua kasus memakai A, B, D, E, F, G, H, N, dan R. Kartu di bawah hanya menunjukkan penyesuaiannya: urutan blok utama, blok tambahan, dan temuan yang menentukan arah.
+  </div>
+
+  <h3>Langkah 2: pilih keluhan, blok, atau cari penyakit</h3>
+  <input class="search" id="q" type="search" placeholder="Cari penyakit atau temuan, misalnya: GBS, Cushing, papiledema" aria-label="Cari penyakit">
+  <div class="flabel">Keluhan utama</div>
+  <div class="toolbar" id="cx"></div>
+  <div class="flabel">Tampilkan penyakit yang memakai blok</div>
+  <div class="chiprow" id="bf"></div>
+  <p class="muted" id="count" style="margin-top:12px"></p>
+  <div id="dis"></div>
+</section>
+
+<!-- ============ JEBAKAN ============ -->
+<section class="panel" id="p-jebakan">
+  <h2>Jebakan yang sering tertukar</h2>
+  <p class="muted">Baca situasi dan kesalahan umum, jawab dulu dalam hati, lalu ketuk kartu untuk melihat cara yang benar.</p>
+  <div id="flashes"></div>
+</section>
+
+<!-- ============ PENILAIAN ============ -->
+<section class="panel" id="p-nilai">
+  <h2>Penilaian dan target logbook (usulan)</h2>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Keterampilan</th><th>Metode</th><th>Target minimal</th></tr></thead>
+      <tbody>
+        <tr><td>Pemeriksaan neurologis lengkap</td><td>Mini-CEX</td><td>5 pasien</td></tr>
+        <tr><td>GCS dan tanda vital neurologis</td><td>DOPS</td><td>5 pasien</td></tr>
+        <tr><td>Nilai NIHSS</td><td>DOPS</td><td>3 pasien</td></tr>
+        <tr><td>Pemeriksaan saraf kranial</td><td>Mini-CEX</td><td>5 pasien</td></tr>
+        <tr><td>Interpretasi CT kepala</td><td>Case-based discussion</td><td>5 kasus</td></tr>
+        <tr><td>Penatalaksanaan kejang atau stroke akut</td><td>Simulasi atau observasi IGD</td><td>3 kasus</td></tr>
+        <tr><td>Pungsi lumbal</td><td>Observasi, lalu simulasi</td><td>1 sampai 2</td></tr>
+        <tr><td>Epley atau Dix-Hallpike</td><td>Simulasi atau pasien</td><td>1 sampai 2</td></tr>
+        <tr><td>Edukasi dan komunikasi</td><td>OSCE station</td><td>2 station</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h2>Bentuk OSCE akhir</h2>
+  <div class="card">
+    <p>Penilaian akhir dapat berupa OSCE dengan empat jenis station:</p>
+    <ol class="plain">
+      <li>Pemeriksaan neurologis.</li>
+      <li>Kegawatan.</li>
+      <li>Interpretasi penunjang.</li>
+      <li>Komunikasi.</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ LATIHAN ============ -->
+<section class="panel" id="p-latihan">
+  <h2>Pertanyaan latihan</h2>
+  <p class="muted">Jawab dulu secara tertulis atau lisan, baru buka pembahasan.</p>
+
+  <div class="card q" id="q1">
+    <h3>Kasus 1</h3>
+    <p>Seorang pria 62 tahun datang dengan hemiparesis kanan dan afasia sejak 2 jam lalu. GCS 14, TD 190/100, glukosa 110. Langkah apa yang Anda lakukan dalam 10 menit pertama, dan apa yang Anda tunda?</p>
+    <button class="reveal" type="button">Lihat pembahasan</button>
+    <div class="ans">
+      <div class="callout"><strong>Dalam 10 menit pertama</strong>
+        <ol class="plain">
+          <li>Amankan jalan napas, napas, dan sirkulasi. Beri oksigen bila perlu, pasang akses IV, posisikan pasien.</li>
+          <li>Glukosa sudah dicek (110), jadi hipoglikemia tersingkir sebagai peniru stroke.</li>
+          <li>Tetapkan last known well (LKW) lewat anamnesis dan alloanamnesis.</li>
+          <li>Nilai BE-FAST dan NIHSS (blok M), periksa neurologis terarah (E, D, I).</li>
+          <li>Aktifkan alur stroke, minta CT kepala tanpa kontras segera, buat EKG.</li>
+          <li>Skrining kontraindikasi trombolisis, lalu rujuk ke fasilitas stroke bila fasilitas Anda belum mampu.</li>
+        </ol>
+      </div>
+      <div class="callout warn"><strong>Yang ditunda</strong>
+        <ul class="plain">
+          <li>Menurunkan TD secara agresif. Targetnya mengikuti pedoman dan bergantung pada apakah pasien kandidat trombolisis.</li>
+          <li>Obat antitrombotik, sampai CT menyingkirkan perdarahan.</li>
+          <li>Makan dan minum per oral, sampai skrining disfagia selesai.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card q" id="q2">
+    <h3>Kasus 2</h3>
+    <p>Seorang wanita 28 tahun datang dengan pusing berputar sejak 2 hari, menetap, disertai muntah. Dix-Hallpike negatif. Blok apa yang Anda kerjakan berikutnya, dan temuan apa yang membuat Anda menaikkan kewaspadaan terhadap lesi batang otak atau serebelum?</p>
+    <button class="reveal" type="button">Lihat pembahasan</button>
+    <div class="ans">
+      <div class="callout"><strong>Blok berikutnya</strong>
+        Vertigo akut yang menetap adalah sindrom vestibular akut, jadi Dix-Hallpike bukan alat yang tepat. Kerjakan <button class="chip" data-cat="2" data-go="K">K</button> (HINTS: head impulse, nistagmus, test of skew), <button class="chip" data-cat="2" data-go="D">D</button> (saraf kranial), <button class="chip" data-cat="2" data-go="E">E</button> dan <button class="chip" data-cat="2" data-go="H">H</button> (motorik, ataksia, mampu berdiri dan berjalan atau tidak).
+      </div>
+      <div class="callout danger"><strong>Temuan yang menaikkan kewaspadaan lesi sentral</strong>
+        <ul class="plain">
+          <li>Head impulse normal pada pasien yang vertigo akut.</li>
+          <li>Nistagmus berubah arah atau vertikal.</li>
+          <li>Skew deviation positif.</li>
+          <li>Tidak mampu berdiri atau berjalan tanpa bantuan.</li>
+          <li>Defisit saraf kranial lain, ataksia anggota gerak, atau nyeri kepala atau leher yang baru muncul.</li>
+        </ul>
+        Bila ada, lanjutkan ke MRI (N) dan siapkan rujukan (Q).
+      </div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Rekap</strong>
+    Mulai dari keluhan utama, tentukan apakah ada tanda gawat, lalu pilih blok sesuai kecurigaan. Inti tetap sama untuk semua kasus. Yang berubah adalah blok tambahan dan temuan penentu yang membelokkan diagnosis.
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">Materi belajar, bukan pengganti pedoman klinis resmi dan panduan stase kampus.</div>
+</footer>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------- Data blok ---------- */
+var BLOCKS = [
+ {k:"A", cat:1, name:"Anamnesis neurologis", lvl:"4", los:[
+  "Menggali keluhan utama dengan onset (mendadak atau bertahap), perjalanan, pencetus, penyerta, dan fungsi harian yang terganggu.",
+  "Menentukan last known well (LKW) pada kasus stroke, karena angka ini menentukan pilihan terapi reperfusi.",
+  "Menanyakan faktor risiko vaskular (hipertensi, DM, AF, dislipidemia, rokok), obat antikoagulan atau antiplatelet, dan riwayat trauma.",
+  "Menyusun anamnesis khas per keluhan: nyeri kepala (lokasi, karakter, pola, red flag SNOOP), kejang (fase pra-iktal, iktal, pasca-iktal, dari saksi mata), vertigo (episodik atau menetap, durasi, pemicu, gejala batang otak), dan kelemahan (pola, simetri).",
+  "Melakukan alloanamnesis pada pasien yang kesadarannya menurun atau afasia."
+ ]},
+ {k:"B", cat:1, name:"Kesadaran, GCS, pupil, tanda vital, tanda TIK meningkat", lvl:"4", los:[
+  "Menilai GCS (E, M, V) dengan stimulus yang benar dan menuliskan hasilnya dalam format E_M_V_.",
+  "Memeriksa ukuran, bentuk, dan refleks cahaya pupil, serta menyimpulkan makna anisokoria.",
+  "Mengenali trias Cushing (hipertensi dengan tekanan nadi melebar, bradikardia, napas ireguler) dan tanda herniasi.",
+  "Menyebutkan pola napas abnormal (Cheyne-Stokes, Kussmaul, ataksik) dan lokasi lesi yang disarankan."
+ ]},
+ {k:"C", cat:2, name:"Tanda rangsang meningeal", lvl:"4", los:[
+  "Memeriksa kaku kuduk, Kernig, Brudzinski I dan II dengan teknik benar dan aman.",
+  "Membedakan iritasi meningeal dari nyeri leher muskuloskeletal.",
+  "Menyebutkan kondisi yang positif pada tanda ini: meningitis, perdarahan subaraknoid, ensefalitis."
+ ]},
+ {k:"D", cat:2, name:"Saraf kranial I sampai XII", lvl:"4", los:[
+  "N I: memeriksa penghidu per sisi dengan bahan nonirritan.",
+  "N II: memeriksa visus, lapang pandang konfrontasi, warna, dan membedakan defek lapang pandang (hemianopia, kuadranopia, tunnel).",
+  "N III, IV, VI: memeriksa gerak bola mata sembilan arah, ptosis, diplopia, nistagmus.",
+  "N V: memeriksa sensorik tiga cabang, refleks kornea, otot mengunyah.",
+  "N VII: membedakan parese tipe sentral dan perifer (dahi terlibat atau tidak), serta mengenali Bell's palsy.",
+  "N VIII: melakukan tes bisik atau garpu tala (Rinne, Weber) dan membedakan tuli konduktif dari sensorineural.",
+  "N IX, X: memeriksa refleks muntah, uvula, suara.",
+  "N XI: memeriksa otot trapezius dan sternokleidomastoideus.",
+  "N XII: memeriksa deviasi lidah, atrofi, fasikulasi."
+ ]},
+ {k:"E", cat:2, name:"Motorik", lvl:"4", los:[
+  "Menilai kekuatan otot skala MRC 0 sampai 5 pada kelompok otot utama ekstremitas atas dan bawah.",
+  "Menilai tonus dan membedakan spastisitas, rigiditas lead-pipe, dan cogwheel.",
+  "Menilai trofi dan fasikulasi.",
+  "Mengidentifikasi tremor, korea, atetosis, mioklonus, dan mendeskripsikannya dengan jelas.",
+  "Menentukan pola kelemahan: hemiparesis, paraparesis, tetraparesis, monoparesis, dan membedakan UMN dari LMN."
+ ]},
+ {k:"F", cat:2, name:"Refleks", lvl:"4", los:[
+  "Memeriksa refleks bisep, trisep, brakioradialis, patela, dan Achilles dengan hammer yang benar, lalu menilai skala 0 sampai 4.",
+  "Memeriksa refleks patologis: Babinski, Chaddock, Oppenheim, Gordon, Schaefer, Hoffmann-Tromner.",
+  "Memeriksa klonus pergelangan kaki dan patela.",
+  "Menggunakan manuver penguat (Jendrassik) saat refleks sulit dinilai."
+ ]},
+ {k:"G", cat:2, name:"Sensorik", lvl:"4", los:[
+  "Memeriksa raba halus, nyeri tajam, suhu, getar, posisi sendi, dan modalitas kortikal (stereognosis, grafestesia, diskriminasi dua titik).",
+  "Memetakan hasil pada dermatom dan membedakan pola radikular, perifer (glove-stocking), medula spinalis (level sensorik), dan hemisensorik."
+ ]},
+ {k:"H", cat:2, name:"Koordinasi, keseimbangan, gait", lvl:"4", los:[
+  "Melakukan tes jari-hidung, tumit-lutut, diadokokinesia, dan Romberg.",
+  "Menilai gait normal dan tandem, serta mengenali pola abnormal: hemiplegik, steppage, ataksik, parkinsonian, waddling, sensory ataxia.",
+  "Membedakan ataksia serebelar dari ataksia sensorik dari hasil Romberg."
+ ]},
+ {k:"I", cat:2, name:"Fungsi luhur dan bicara", lvl:"4", los:[
+  "Melakukan MMSE atau MoCA-INA dan menyebut batas skor serta pengaruh pendidikan.",
+  "Membedakan afasia Broca, Wernicke, dan konduksi lewat tes spontan, pemahaman, repetisi, dan penamaan.",
+  "Memeriksa neglect (garis bisecting, clock drawing), apraksia, dan agnosia dasar.",
+  "Membedakan delirium dari demensia dari gangguan psikiatri primer."
+ ]},
+ {k:"J", cat:2, name:"Radikulopati dan nyeri punggung", lvl:"4", los:[
+  "Melakukan Lasegue (positif bila nyeri muncul pada sekitar 30 sampai 70 derajat), Bragard, crossed Lasegue, femoral stretch, dan Spurling.",
+  "Mengenali red flag nyeri punggung: sindrom kauda ekuina, defisit progresif, riwayat keganasan, demam, trauma.",
+  "Menyebut indikasi rujuk segera dan indikasi pencitraan."
+ ]},
+ {k:"K", cat:2, name:"Vertigo", lvl:"3", los:[
+  "Membedakan vertigo sentral dari perifer memakai HINTS (head impulse, nistagmus, test of skew) pada pasien dengan sindrom vestibular akut.",
+  "Melakukan Dix-Hallpike dan mengenali nistagmus khas BPPV.",
+  "Melakukan manuver Epley secara berurutan dengan pengawasan."
+ ]},
+ {k:"L", cat:2, name:"Fundoskopi", lvl:"3", los:[
+  "Menggunakan oftalmoskop, menilai papil, makula, dan pembuluh retina.",
+  "Mengenali papiledema (batas kabur, papil menonjol) sebagai tanda TIK meningkat."
+ ]},
+ {k:"M", cat:3, name:"Skala klinis", lvl:"4", los:[
+  "Menilai FAST atau BE-FAST pada triase stroke.",
+  "Mengisi NIHSS (0 sampai 42) dan menjelaskan kegunaannya untuk keparahan serta pemantauan.",
+  "Menerapkan Algoritma Gajah Mada dan Skor Siriraj saat CT scan belum tersedia, dengan menyebut keterbatasannya.",
+  "Menilai mRS dan Barthel Index untuk luaran fungsional."
+ ]},
+ {k:"N", cat:3, name:"Penunjang dan interpretasi", lvl:"3", los:[
+  "Menegakkan prioritas: glukosa darah sewaktu selalu dicek pada setiap penurunan kesadaran atau defisit akut.",
+  "Membaca CT scan kepala tanpa kontras: membedakan perdarahan (hiperdens) dari infark (hipodens), mengenali efek massa, midline shift, dan hidrosefalus.",
+  "Menyebut indikasi MRI, CT/MR angiografi, EEG, EMG/KHS secara umum.",
+  "Menginterpretasi hasil analisis LCS: tekanan buka, warna, sel, protein, glukosa, dan membedakan pola bakterial, viral, tuberkulosis, dan jamur.",
+  "Membaca EKG untuk mencari fibrilasi atrium pada stroke iskemik."
+ ]},
+ {k:"O", cat:4, name:"Pungsi lumbal", lvl:"3", los:[
+  "Menyebutkan indikasi (meningitis, ensefalitis, SAH dengan CT negatif, GBS) dan kontraindikasi (peningkatan TIK dengan efek massa, infeksi lokal, koagulopati).",
+  "Menentukan lokasi tusukan di ruang L3–L4 atau L4–L5 dengan landmark garis intercristal.",
+  "Menyiapkan alat, posisi lateral dekubitus atau duduk, teknik aseptik, anestesi lokal.",
+  "Mengukur tekanan buka, mengambil dan melabeli sampel secara berurutan.",
+  "Mengenali dan menangani komplikasi: nyeri kepala pasca-pungsi, nyeri radikular, perdarahan, herniasi.",
+  "Memberikan informed consent dan instruksi pasca-tindakan."
+ ]},
+ {k:"P", cat:4, name:"Prosedur penunjang", lvl:"4", los:[
+  "Memasang NGT pada pasien stroke dengan disfagia dan memastikan posisinya.",
+  "Memasang kateter urin dan infus.",
+  "Melakukan manajemen jalan napas dasar: head tilt-chin lift, jaw thrust, suction, oksigenasi, posisi pemulihan.",
+  "Mengatur posisi kepala 30 derajat pada kecurigaan TIK meningkat.",
+  "Melakukan skrining disfagia sederhana sebelum pemberian makan oral."
+ ]},
+ {k:"Q", cat:5, name:"Kegawatan neurologis", lvl:"3–4", los:[
+  "Stroke akut: mengaktifkan alur stroke, menilai jendela waktu reperfusi, melakukan skrining kontraindikasi trombolisis, mengelola tekanan darah dan glukosa sesuai pedoman, lalu merujuk ke fasilitas stroke.",
+  "Status epileptikus: mengenali kejang lebih dari 5 menit, memberikan benzodiazepin lini pertama, lalu menyebut lini berikutnya dan kapan rujuk.",
+  "TIK meningkat: menilai tanda, memberi posisi dan terapi awal, merencanakan rujukan.",
+  "Meningitis dan ensefalitis: memberi antibiotik empiris tanpa menunda untuk CT atau pungsi lumbal bila ada kecurigaan bakterial.",
+  "Cedera kepala: triase, GCS serial, indikasi CT, kriteria observasi dan rawat.",
+  "Krisis miastenik dan GBS: mengenali gagal napas yang akan datang."
+ ]},
+ {k:"R", cat:5, name:"Komunikasi dan profesionalisme", lvl:"4", los:[
+  "Meminta informed consent untuk pungsi lumbal dan prosedur lain.",
+  "Menyampaikan kabar buruk (stroke luas, penurunan kognitif, diagnosis epilepsi) secara empatik dengan kerangka yang terstruktur.",
+  "Mengedukasi epilepsi: kepatuhan obat, pemicu kejang, keselamatan (mengemudi, berenang), dan peran keluarga.",
+  "Mengedukasi pencegahan sekunder stroke dan rehabilitasi awal.",
+  "Menulis rekam medis SOAP neurologis yang memuat diagnosis topis dan etiologis.",
+  "Menerapkan rujukan yang aman: stabilisasi, komunikasi dengan penerima, surat rujukan lengkap."
+ ]}
+];
+var BYK = {}; BLOCKS.forEach(function(b){ BYK[b.k] = b; });
+
+var CATS = {
+  1:"Dasar klinis", 2:"Pemeriksaan fisik", 3:"Skala dan penunjang",
+  4:"Prosedur", 5:"Kegawatan dan komunikasi"
+};
+
+/* ---------- Data penyakit ---------- */
+/* main/extra: "X" atau "X:catatan" */
+var GROUPS = [
+ {name:"Kegawatan vaskular dan struktural", items:[
+  {n:"Stroke iskemik akut", main:["B","M:BE-FAST dan NIHSS","A:LKW","E","D","I","N:glukosa, CT, EKG","Q"], extra:["P:skrining disfagia, NGT","L","H","R"], key:"Defisit fokal mendadak, LKW dalam jendela terapi, CT tanpa perdarahan."},
+  {n:"Stroke hemoragik (ICH)", main:["B","M:Siriraj atau Gajah Mada bila tanpa CT","E","N:CT","Q"], extra:["C","L","P"], key:"TD sangat tinggi, nyeri kepala, muntah, CT hiperdens."},
+  {n:"Perdarahan subaraknoid (SAH)", main:["A:nyeri kepala tiba-tiba terberat seumur hidup","B","C","D:N III","N:CT segera","O:bila CT negatif","Q"], extra:["L","M"], key:"Kaku kuduk, xantokrom LCS, CT hiperdens sisterna."},
+  {n:"TIA", main:["A","E","D","I","M","N:EKG, laboratorium, pencitraan","R"], extra:["H"], key:"Defisit pulih penuh, risiko stroke tinggi, perlu evaluasi segera."},
+  {n:"TIK meningkat atau tumor otak", main:["A:nyeri kepala progresif, muntah proyektil","B","L:papiledema","D:N VI","N:CT atau MRI kontras","Q"], extra:["E","I","H"], key:"Trias Cushing, papiledema, defisit progresif. Kontraindikasi untuk O sampai efek massa disingkirkan."},
+  {n:"Cedera kepala", main:["A:mekanisme","B:GCS serial dan pupil","D","E","N:kriteria CT","P","Q"], extra:["C","R"], key:"GCS, anisokoria, tanda fraktur basis, kriteria observasi atau rujuk."}
+ ]},
+ {name:"Epilepsi dan gangguan kesadaran", items:[
+  {n:"Epilepsi, kejang pertama", main:["A:saksi mata, fase iktal","B","E","F","N:glukosa, elektrolit, CT, EEG","R"], extra:["I"], key:"Defisit pasca-iktal (Todd), pemicu simptomatik."},
+  {n:"Status epileptikus", main:["B","P:jalan napas, oksigen, akses IV","Q"], extra:["N:glukosa, elektrolit","R"], key:"Kejang lebih dari 5 menit atau berulang tanpa pulih sadar."},
+  {n:"Ensefalopati metabolik atau delirium", main:["B","I","N:glukosa, elektrolit, ureum, fungsi hati"], extra:["C","E","F","Q"], key:"Kesadaran berfluktuasi, flapping tremor, kelainan laboratorium."}
+ ]},
+ {name:"Infeksi", items:[
+  {n:"Meningitis", main:["A","B","C","D","E","L","N","O","Q"], extra:["P","R"], key:"Demam, kaku kuduk, LCS keruh, sel dan protein tinggi. Antibiotik empiris tidak menunggu LP."},
+  {n:"Ensefalitis", main:["A","B","C","I","E","N:LCS, EEG, MRI","O"], extra:["Q"], key:"Penurunan kesadaran, perubahan perilaku, kejang."}
+ ]},
+ {name:"Pusing, wajah, saraf kranial", items:[
+  {n:"BPPV", main:["A:episodik singkat dipicu posisi","K:Dix-Hallpike, Epley","D"], extra:["H"], key:"Nistagmus torsional khas, durasi kurang dari satu menit."},
+  {n:"Neuritis vestibularis", main:["A","K:HINTS","D","H"], extra:["N"], key:"Vertigo akut menetap, head impulse abnormal, tanpa gejala batang otak."},
+  {n:"Vertigo sentral", main:["A","K:HINTS","D","E","H","N:MRI","Q"], extra:["L","I"], key:"HINTS menyimpang, tidak mampu berdiri, defisit batang otak."},
+  {n:"Bell's palsy", main:["D:N VII, bedakan sentral","E","G","A"], extra:["R"], key:"Dahi ikut lumpuh berarti perifer. Tanpa kelemahan anggota gerak."},
+  {n:"Neuralgia trigeminal", main:["A","D:N V","G:wajah"], extra:["N:MRI"], key:"Nyeri tajam seperti tersengat di wilayah N V dengan pemicu."}
+ ]},
+ {name:"Kelemahan tungkai dan saraf tepi", items:[
+  {n:"GBS", main:["A:infeksi sebelumnya, kelemahan naik","E","F:arefleksia","G","D","N:LCS, KHS","Q"], extra:["P","O"], key:"Kelemahan simetris menaik, disosiasi sitoalbuminologis, ancaman gagal napas."},
+  {n:"Miastenia gravis", main:["A:kelelahan sepanjang hari","D:ptosis, diplopia","E:fatigabilitas","N"], extra:["Q"], key:"Kelemahan berfluktuasi, refleks normal, risiko krisis."},
+  {n:"Neuropati diabetik", main:["A","G:monofilamen, getar","F","E","H:Romberg","N:GDS, HbA1c"], extra:["R"], key:"Pola glove-stocking, refleks Achilles hilang."},
+  {n:"Mielopati atau kompresi medula spinalis", main:["A","E","F:hiperrefleks","G:level sensorik","J","N:MRI","Q"], extra:["P:kateter"], key:"Level sensorik, gangguan BAB/BAK, rujuk segera bila kauda ekuina."},
+  {n:"HNP dan radikulopati", main:["A","J:Lasegue, Bragard, femoral stretch","E","F","G","H","N:MRI bila indikasi","R"], extra:["Q:red flag"], key:"Nyeri radikular sesuai dermatom, Lasegue positif."}
+ ]},
+ {name:"Kognitif, gerak, nyeri kepala primer", items:[
+  {n:"Demensia", main:["A:alloanamnesis","I:MMSE atau MoCA-INA","D","E","H","N:B12, TSH, CT atau MRI","R"], extra:["F"], key:"Penurunan bertahap, cari penyebab yang dapat dikoreksi."},
+  {n:"Parkinson", main:["A","E:tonus, tremor, bradikinesia","H:gait, pull test","F","I","R"], extra:["D"], key:"Bradikinesia dengan rigiditas atau tremor istirahat."},
+  {n:"Nyeri kepala primer (migrain, tension, cluster)", main:["A:karakter, pola, red flag SNOOP","L","C","R"], extra:["N:bila ada red flag"], key:"Pemeriksaan neurologis lengkap normal. Red flag berarti cari penyebab sekunder."}
+ ]}
+];
+
+var COMPLAINTS = [
+ {l:"Penurunan kesadaran", d:["Stroke iskemik akut","Stroke hemoragik (ICH)","Perdarahan subaraknoid (SAH)","Meningitis","Ensefalitis","TIK meningkat atau tumor otak","Cedera kepala","Ensefalopati metabolik atau delirium","Status epileptikus"]},
+ {l:"Kelemahan atau wajah mencong mendadak", d:["Stroke iskemik akut","Stroke hemoragik (ICH)","TIA","Bell's palsy"]},
+ {l:"Kejang", d:["Epilepsi, kejang pertama","Status epileptikus","Ensefalitis","Meningitis","Ensefalopati metabolik atau delirium"]},
+ {l:"Nyeri kepala", d:["Nyeri kepala primer (migrain, tension, cluster)","Perdarahan subaraknoid (SAH)","Meningitis","TIK meningkat atau tumor otak"]},
+ {l:"Pusing berputar", d:["BPPV","Neuritis vestibularis","Vertigo sentral"]},
+ {l:"Kelemahan tungkai bertahap", d:["GBS","Mielopati atau kompresi medula spinalis","HNP dan radikulopati","Neuropati diabetik","Miastenia gravis"]},
+ {l:"Nyeri punggung dan kesemutan", d:["HNP dan radikulopati","Mielopati atau kompresi medula spinalis","Neuropati diabetik"]},
+ {l:"Demam dan kaku kuduk", d:["Meningitis","Ensefalitis"]},
+ {l:"Gangguan memori atau gerak lambat", d:["Demensia","Parkinson","Ensefalopati metabolik atau delirium"]},
+ {l:"Nyeri wajah tajam", d:["Neuralgia trigeminal"]}
+];
+
+var TRAPS = [
+ {s:"Kecurigaan meningitis", bad:"Menunda antibiotik sampai CT dan LP selesai.", good:"Beri antibiotik empiris dulu bila kecurigaan bakterial tinggi."},
+ {s:"Papiledema atau tanda herniasi", bad:"Langsung pungsi lumbal.", good:"Singkirkan efek massa dengan CT dulu."},
+ {s:"Pasien kejang", bad:"Fokus pada obat antikonvulsan.", good:"Cek glukosa dan amankan jalan napas dulu."},
+ {s:"Wajah mencong", bad:"Langsung menyimpulkan Bell's palsy.", good:"Cek dahi dan anggota gerak. Bila dahi spared dan ada hemiparesis, curiga sentral."},
+ {s:"Vertigo", bad:"Mengandalkan Dix-Hallpike pada vertigo akut yang menetap.", good:"Gunakan HINTS pada sindrom vestibular akut."},
+ {s:"Nyeri kepala hebat dengan CT normal", bad:"Memulangkan pasien.", good:"Lakukan LP bila kecurigaan SAH masih tinggi."}
+];
+
+/* ---------- Util ---------- */
+function $(s, r){ return (r||document).querySelector(s); }
+function $$(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+function store(op, key, val){
+  try{
+    if(op === "get") return localStorage.getItem(key);
+    if(op === "set") localStorage.setItem(key, val);
+    if(op === "del") localStorage.removeItem(key);
+  }catch(e){}
+  return null;
+}
+function chip(k, extraClass, label){
+  var b = BYK[k];
+  return '<button type="button" class="chip '+(extraClass||'')+'" data-cat="'+b.cat+'" data-go="'+k+'" title="Blok '+k+': '+b.name+'" aria-label="Blok '+k+': '+b.name+'">'+(label||k)+'</button>';
+}
+
+/* ---------- Tab ---------- */
+function showTab(id){
+  $$("#tabs button").forEach(function(b){ b.setAttribute("aria-selected", b.dataset.tab === id ? "true":"false"); });
+  $$(".panel").forEach(function(p){ p.classList.toggle("on", p.id === "p-"+id); });
+  store("set","ssaraf-tab", id);
+  window.scrollTo({top:0});
+}
+$("#tabs").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-tab]");
+  if(b) showTab(b.dataset.tab);
+});
+
+function goBlock(k){
+  showTab("blok");
+  var d = document.getElementById("blk-"+k);
+  if(d){
+    d.open = true;
+    setTimeout(function(){ d.scrollIntoView({behavior:"smooth", block:"start"}); }, 30);
+  }
+}
+document.addEventListener("click", function(e){
+  var c = e.target.closest("[data-go]");
+  if(c && !c.closest("#bf")){ e.preventDefault(); goBlock(c.dataset.go); }
+});
+
+/* ---------- Legend + tabel peta ---------- */
+(function(){
+  var h = "";
+  Object.keys(CATS).forEach(function(c){
+    h += '<span><i class="chip" data-cat="'+c+'" style="min-width:14px;height:14px;padding:0;cursor:default"></i>'+CATS[c]+'</span>';
+  });
+  $("#legend").innerHTML = h;
+  var rows = "";
+  BLOCKS.forEach(function(b){
+    rows += '<tr><td>'+chip(b.k)+'</td><td>'+b.name+'</td><td><span class="lvl">'+b.lvl+'</span></td></tr>';
+  });
+  $("#maptable tbody").innerHTML = rows;
+})();
+
+/* ---------- Blok A-R ---------- */
+function loKey(k,i){ return "ssaraf-lo-"+k+"-"+i; }
+function renderBlocks(){
+  var h = "";
+  BLOCKS.forEach(function(b){
+    h += '<details class="blk" id="blk-'+b.k+'"><summary>'+
+         '<span class="chip" data-cat="'+b.cat+'" style="cursor:inherit">'+b.k+'</span>'+
+         '<span class="nm">'+b.name+'</span><span class="lvl">Level '+b.lvl+'</span>'+
+         '<span class="cnt" id="cnt-'+b.k+'"></span></summary><div class="body">';
+    b.los.forEach(function(t,i){
+      var id = "lo-"+b.k+"-"+i;
+      h += '<div class="lo"><input type="checkbox" id="'+id+'" data-k="'+b.k+'" data-i="'+i+'"><label for="'+id+'">'+t+'</label></div>';
+    });
+    h += '</div></details>';
+  });
+  $("#blocks").innerHTML = h;
+  $$("#blocks input[type=checkbox]").forEach(function(cb){
+    cb.checked = store("get", loKey(cb.dataset.k, cb.dataset.i)) === "1";
+  });
+  updateProgress();
+}
+function updateProgress(){
+  var total = 0, done = 0;
+  BLOCKS.forEach(function(b){
+    var d = 0;
+    b.los.forEach(function(_,i){
+      var cb = document.getElementById("lo-"+b.k+"-"+i);
+      if(cb && cb.checked) d++;
+    });
+    total += b.los.length; done += d;
+    var el = document.getElementById("cnt-"+b.k);
+    if(el) el.textContent = d+"/"+b.los.length;
+  });
+  var pct = total ? Math.round(done*100/total) : 0;
+  $("#barfill").style.width = pct+"%";
+  $("#bar").setAttribute("aria-valuenow", pct);
+  $("#progtxt").textContent = done+" dari "+total+" LO dikuasai ("+pct+"%)";
+}
+$("#blocks").addEventListener("change", function(e){
+  var cb = e.target;
+  if(cb.matches("input[type=checkbox]")){
+    store(cb.checked ? "set":"del", loKey(cb.dataset.k, cb.dataset.i), "1");
+    updateProgress();
+  }
+});
+$("#expand").addEventListener("click", function(){ $$("details.blk").forEach(function(d){ d.open = true; }); });
+$("#collapse").addEventListener("click", function(){ $$("details.blk").forEach(function(d){ d.open = false; }); });
+$("#reset").addEventListener("click", function(){
+  if(!window.confirm("Hapus semua centang LO?")) return;
+  BLOCKS.forEach(function(b){ b.los.forEach(function(_,i){ store("del", loKey(b.k,i)); }); });
+  $$("#blocks input[type=checkbox]").forEach(function(cb){ cb.checked = false; });
+  updateProgress();
+});
+
+/* ---------- Peta keputusan ---------- */
+var state = {q:"", cx:-1, blk:""};
+
+function parse(s){
+  var i = s.indexOf(":");
+  return i < 0 ? {k:s, note:""} : {k:s.slice(0,i), note:s.slice(i+1)};
+}
+function renderFilters(){
+  var h = "";
+  COMPLAINTS.forEach(function(c,i){
+    h += '<button type="button" class="pill" data-cx="'+i+'" aria-pressed="false">'+c.l+'</button>';
+  });
+  $("#cx").innerHTML = h;
+  var b = "";
+  BLOCKS.forEach(function(x){
+    b += '<button type="button" class="chip" data-cat="'+x.cat+'" data-bf="'+x.k+'" aria-pressed="false" title="'+x.name+'">'+x.k+'</button>';
+  });
+  $("#bf").innerHTML = b;
+}
+function renderDis(){
+  var q = state.q.trim().toLowerCase();
+  var allowed = state.cx >= 0 ? COMPLAINTS[state.cx].d : null;
+  var out = "", n = 0;
+  GROUPS.forEach(function(g){
+    var cards = "";
+    g.items.forEach(function(d){
+      if(allowed && allowed.indexOf(d.n) < 0) return;
+      if(q && (d.n+" "+d.key+" "+g.name).toLowerCase().indexOf(q) < 0) return;
+      if(state.blk){
+        var has = d.main.concat(d.extra).some(function(s){ return parse(s).k === state.blk; });
+        if(!has) return;
+      }
+      n++;
+      var steps = d.main.map(function(s){
+        var p = parse(s), b = BYK[p.k];
+        return '<li>'+chip(p.k)+'<span class="t"><b>'+b.name+'</b>'+(p.note?'<small>'+p.note+'</small>':'')+'</span></li>';
+      }).join("");
+      var ex = d.extra.map(function(s){
+        var p = parse(s);
+        return chip(p.k,"outline")+(p.note?'<span class="muted" style="font-size:.85rem">'+p.note+'</span>':'');
+      }).join(" ");
+      cards += '<article class="card dis"><h3>'+d.n+'</h3>'+
+        '<div class="flabel" style="margin-top:4px">Blok utama, urutan kerja</div><ol class="steps">'+steps+'</ol>'+
+        (d.extra.length?'<div class="extra"><span class="lbl">Tambahan:</span>'+ex+'</div>':'')+
+        '<div class="key"><b>Temuan penentu.</b> '+d.key+'</div></article>';
+    });
+    if(cards) out += '<h3 class="gtitle">'+g.name+'</h3>'+cards;
+  });
+  $("#dis").innerHTML = out || '<div class="empty">Tidak ada penyakit yang cocok dengan filter ini.</div>';
+  $("#count").textContent = n+" kecurigaan ditampilkan";
+}
+$("#q").addEventListener("input", function(e){ state.q = e.target.value; renderDis(); });
+$("#cx").addEventListener("click", function(e){
+  var b = e.target.closest("[data-cx]"); if(!b) return;
+  var i = +b.dataset.cx;
+  state.cx = state.cx === i ? -1 : i;
+  $$("#cx .pill").forEach(function(p){ p.setAttribute("aria-pressed", (+p.dataset.cx === state.cx) ? "true":"false"); });
+  renderDis();
+});
+$("#bf").addEventListener("click", function(e){
+  var b = e.target.closest("[data-bf]"); if(!b) return;
+  state.blk = state.blk === b.dataset.bf ? "" : b.dataset.bf;
+  $$("#bf .chip").forEach(function(c){
+    var on = c.dataset.bf === state.blk;
+    c.setAttribute("aria-pressed", on ? "true":"false");
+    c.classList.toggle("sel", on);
+  });
+  renderDis();
+});
+
+/* ---------- Jebakan ---------- */
+(function(){
+  var h = "";
+  TRAPS.forEach(function(t){
+    h += '<button type="button" class="flash" aria-expanded="false"><div class="sit">'+t.s+'</div>'+
+         '<div class="bad"><b>Kesalahan umum:</b> '+t.bad+'</div>'+
+         '<div class="good"><b>Cara yang benar:</b> '+t.good+'</div>'+
+         '<div class="hint">Ketuk untuk melihat cara yang benar</div></button>';
+  });
+  $("#flashes").innerHTML = h;
+  $("#flashes").addEventListener("click", function(e){
+    var f = e.target.closest(".flash"); if(!f) return;
+    f.classList.toggle("open");
+    f.setAttribute("aria-expanded", f.classList.contains("open") ? "true":"false");
+  });
+})();
+
+/* ---------- Latihan ---------- */
+$$(".q .reveal").forEach(function(b){
+  b.addEventListener("click", function(){ b.closest(".q").classList.add("open"); });
+});
+
+/* ---------- Init ---------- */
+renderBlocks();
+renderFilters();
+renderDis();
+var saved = store("get","ssaraf-tab");
+if(saved && document.getElementById("p-"+saved)) showTab(saved);
+})();
+</script>
+</body>
+</html>
